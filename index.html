@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Natural Wear</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f8f8f5;
+  color: #222;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 25px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+}
+
+nav a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.hero h1 {
+  font-size: 32px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border: none;
+  background: #222;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.section-title {
+  padding-left: 20px;
+  margin-top: 20px;
+}
+
+.cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #222;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.about {
+  padding: 40px 20px;
+  text-align: center;
+  background: white;
+  margin-top: 30px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: gray;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <strong>Natural Wear</strong>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Products</a>
+    <a href="#">About</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Minimal Clothing for Everyday Life</h1>
+  <p>Simple. Clean. Natural.</p>
+</section>
+
+<h2 class="section-title">Everyday Wear</h2>
+<section class="products" id="everyday"></section>
+
+<h2 class="section-title">Premium Collection</h2>
+<section class="products" id="premium"></section>
+
+<div class="cart" onclick="orderNow()">
+  🛒 Order Now
+</div>
+
+<section class="about">
+  <h2>About Us</h2>
+  <p>
+    We create minimal, natural clothing inspired by everyday life.
+    Supporting local brands and simple design.
+  </p>
+</section>
+
+<footer>
+  © 2026 Natural Wear
+</footer>
+
+<script>
+const products = [
+  {name: "Beige T-Shirt", price: 499, category: "everyday", img: "https://via.placeholder.com/200"},
+  {name: "White Shirt", price: 799, category: "everyday", img: "https://via.placeholder.com/200"},
+  {name: "Black Pants", price: 999, category: "premium", img: "https://via.placeholder.com/200"},
+  {name: "Designer Hoodie", price: 1499, category: "premium", img: "https://via.placeholder.com/200"}
+];
+
+let cart = [];
+
+function renderProducts() {
+  const everyday = document.getElementById("everyday");
+  const premium = document.getElementById("premium");
+
+  products.forEach((p, i) => {
+    const card = `
+      <div class="card">
+        <img src="${p.img}">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button onclick="addToCart(${i})">Add to Cart</button>
+      </div>
+    `;
+
+    if (p.category === "everyday") {
+      everyday.innerHTML += card;
+    } else {
+      premium.innerHTML += card;
+    }
+  });
+}
+
+function addToCart(index) {
+  cart.push(products[index]);
+  alert("Added to cart");
+}
+
+function orderNow() {
+  if (cart.length === 0) {
+    alert("Cart is empty");
+    return;
+  }
+
+  let total = 0;
+  cart.forEach(item => total += item.price);
+
+  let upiID = "yourupi@upi"; // CHANGE THIS
+
+  let url = `upi://pay?pa=${upiID}&pn=NaturalWear&am=${total}&cu=INR`;
+
+  window.location.href = url;
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
