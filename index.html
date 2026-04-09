@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERAK</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: #0b0b0b;
+  color: #fff;
+}
+
+/* HEADER */
+header {
+  padding: 15px;
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 4px;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+}
+
+/* HERO */
+.hero {
+  height: 60vh;
+  background: url('https://images.unsplash.com/photo-1520975916090-3105956dac38') center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 32px;
+  background: rgba(0,0,0,0.6);
+  padding: 10px 20px;
+}
+
+/* CATEGORY */
+.categories {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px;
+}
+
+.categories button {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  background: #1f1f1f;
+  color: white;
+  transition: 0.3s;
+}
+
+.categories button:hover {
+  background: white;
+  color: black;
+}
+
+/* PRODUCTS */
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 15px;
+}
+
+.card {
+  background: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 10px;
+}
+
+.add {
+  width: 100%;
+  padding: 8px;
+  background: white;
+  color: black;
+  border: none;
+  border-radius: 5px;
+}
+
+/* CART */
+.cart-box {
+  padding: 15px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.cart-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  color: black;
+  padding: 12px 16px;
+  border-radius: 30px;
+}
+
+/* FORM */
+input, textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>SERAK</header>
+
+<section class="hero">
+  <h1>STREET. RAW. SERAK.</h1>
+</section>
+
+<div class="categories">
+  <button onclick="filterProducts('all')">All</button>
+  <button onclick="filterProducts('men')">Men</button>
+  <button onclick="filterProducts('women')">Women</button>
+</div>
+
+<section class="products" id="products"></section>
+
+<div class="cart-box">
+  <h3>Cart</h3>
+  <div id="cartItems"></div>
+
+  <h3>Your Details</h3>
+  <input id="name" placeholder="Name">
+  <input id="phone" placeholder="Phone">
+  <textarea id="address" placeholder="Address"></textarea>
+</div>
+
+<div class="cart-btn" onclick="orderNow()">
+  🛒 (<span id="count">0</span>)
+</div>
+
+<script>
+const products = [
+  {name:"Oversized Tee", price:499, cat:"men", img:"https://images.unsplash.com/photo-1523381210434-271e8be1f52b"},
+  {name:"Hoodie", price:1499, cat:"men", img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
+  {name:"Crop Top", price:699, cat:"women", img:"https://images.unsplash.com/photo-1489987707025-afc232f7ea0f"},
+  {name:"Denim Jacket", price:1999, cat:"women", img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"}
+];
+
+let cart = [];
+let currentFilter = "all";
+
+function renderProducts() {
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+
+  products.forEach((p, i) => {
+    if (currentFilter !== "all" && p.cat !== currentFilter) return;
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <img src="${p.img}">
+      <div class="card-content">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button class="add">Add</button>
+      </div>
+    `;
+
+    card.querySelector("button").onclick = () => addToCart(i);
+
+    container.appendChild(card);
+  });
+}
+
+function addToCart(i) {
+  cart.push(products[i]);
+  updateCart();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateCart();
+}
+
+function updateCart() {
+  document.getElementById("count").innerText = cart.length;
+
+  const list = document.getElementById("cartItems");
+  list.innerHTML = "";
+
+  cart.forEach((item, i) => {
+    list.innerHTML += `
+      <div class="cart-item">
+        ${item.name} - ₹${item.price}
+        <button onclick="removeItem(${i})">❌</button>
+      </div>
+    `;
+  });
+}
+
+function filterProducts(cat) {
+  currentFilter = cat;
+  renderProducts();
+}
+
+function orderNow() {
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
+  let address = document.getElementById("address").value;
+
+  if (!name || !phone || !address || cart.length === 0) {
+    alert("Fill all details & cart");
+    return;
+  }
+
+  let msg = "🛒 *SERAK ORDER*%0A%0A";
+
+  let total = 0;
+
+  cart.forEach(item => {
+    msg += item.name + " - ₹" + item.price + "%0A";
+    total += item.price;
+  });
+
+  msg += "%0A*Total:* ₹" + total + "%0A%0A";
+  msg += "*Name:* " + name + "%0A";
+  msg += "*Phone:* " + phone + "%0A";
+  msg += "*Address:* " + address;
+
+  let phoneNumber = "917085967649";
+
+  window.open(`https://wa.me/${phoneNumber}?text=${msg}`);
+
+  cart = [];
+  updateCart();
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
