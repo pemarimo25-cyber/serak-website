@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERAK</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f0f0f;
+  color: #fff;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background: black;
+  border-bottom: 1px solid #222;
+}
+
+header h2 {
+  letter-spacing: 2px;
+}
+
+nav a {
+  color: #aaa;
+  margin-left: 15px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.hero h1 {
+  font-size: 36px;
+  letter-spacing: 3px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  padding: 20px;
+}
+
+.card {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  background: white;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.section-title {
+  padding-left: 20px;
+  margin-top: 20px;
+}
+
+.cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  color: black;
+  padding: 12px 16px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>SERAK</h2>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Shop</a>
+    <a href="#">About</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>STREET. RAW. SERAK.</h1>
+  <p>Built for everyday streets.</p>
+</section>
+
+<h3 class="section-title">Everyday Wear</h3>
+<section class="products" id="everyday"></section>
+
+<h3 class="section-title">Premium Drop</h3>
+<section class="products" id="premium"></section>
+
+<div class="cart" onclick="orderNow()">
+  🛒 Cart (<span id="count">0</span>)
+</div>
+
+<footer>
+  © 2026 SERAK
+</footer>
+
+<script>
+const products = [
+  {name: "Oversized Tee", price: 499, category: "everyday", img: "https://via.placeholder.com/200"},
+  {name: "Street Shirt", price: 799, category: "everyday", img: "https://via.placeholder.com/200"},
+  {name: "Cargo Pants", price: 1299, category: "premium", img: "https://via.placeholder.com/200"},
+  {name: "Heavy Hoodie", price: 1799, category: "premium", img: "https://via.placeholder.com/200"}
+];
+
+let cart = [];
+
+function renderProducts() {
+  const everyday = document.getElementById("everyday");
+  const premium = document.getElementById("premium");
+
+  products.forEach((p, i) => {
+    const card = `
+      <div class="card">
+        <img src="${p.img}">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button onclick="addToCart(${i})">Add</button>
+      </div>
+    `;
+
+    if (p.category === "everyday") {
+      everyday.innerHTML += card;
+    } else {
+      premium.innerHTML += card;
+    }
+  });
+}
+
+function addToCart(index) {
+  cart.push(products[index]);
+
+  document.getElementById("count").innerText = cart.length;
+
+  const msg = document.createElement("div");
+  msg.innerText = "Added to cart";
+  msg.style.position = "fixed";
+  msg.style.bottom = "80px";
+  msg.style.right = "20px";
+  msg.style.background = "white";
+  msg.style.color = "black";
+  msg.style.padding = "10px 15px";
+  msg.style.borderRadius = "5px";
+
+  document.body.appendChild(msg);
+
+  setTimeout(() => {
+    msg.remove();
+  }, 1500);
+}
+
+function orderNow() {
+  if (cart.length === 0) {
+    alert("Cart is empty");
+    return;
+  }
+
+  let total = 0;
+  cart.forEach(item => total += item.price);
+
+  let upiID = "yourupi@upi"; // CHANGE THIS
+
+  let url = `upi://pay?pa=${upiID}&pn=SERAK&am=${total}&cu=INR`;
+
+  window.location.href = url;
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
