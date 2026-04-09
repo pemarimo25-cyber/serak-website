@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERAK Admin</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:#0b0b0b;
+  color:white;
+  text-align:center;
+}
+
+.container {
+  padding:20px;
+}
+
+input {
+  width:90%;
+  padding:10px;
+  margin:5px;
+  border:none;
+  border-radius:5px;
+}
+
+button {
+  padding:10px;
+  width:90%;
+  background:white;
+  border:none;
+  border-radius:5px;
+}
+
+.product {
+  background:#1a1a1a;
+  margin:10px;
+  padding:10px;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="loginBox">
+  <h2>Admin Login</h2>
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="container" id="adminPanel" style="display:none;">
+
+  <h2>Add Product</h2>
+
+  <input id="name" placeholder="Product Name">
+  <input id="price" placeholder="Price">
+  <input id="img" placeholder="Image URL">
+
+  <button onclick="addProduct()">Add Product</button>
+
+  <h2>All Products</h2>
+  <div id="list"></div>
+
+</div>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+function login(){
+  if(user.value==="admin" && pass.value==="1234"){
+    loginBox.style.display="none";
+    adminPanel.style.display="block";
+    render();
+  } else {
+    alert("Wrong login");
+  }
+}
+
+function addProduct(){
+  let p = {
+    name:name.value,
+    price:price.value,
+    img:img.value
+  };
+
+  products.push(p);
+  localStorage.setItem("products", JSON.stringify(products));
+  render();
+}
+
+function deleteProduct(i){
+  products.splice(i,1);
+  localStorage.setItem("products", JSON.stringify(products));
+  render();
+}
+
+function render(){
+  let box = document.getElementById("list");
+  box.innerHTML="";
+
+  products.forEach((p,i)=>{
+    box.innerHTML += `
+      <div class="product">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button onclick="deleteProduct(${i})">Delete</button>
+      </div>
+    `;
+  });
+}
+</script>
+
+</body>
+</html>
