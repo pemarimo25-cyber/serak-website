@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<title>SERAK</title>
+
+<style>
+body{margin:0;font-family:'Poppins';background:#0a0a0a;color:#fff;}
+header{text-align:center;padding:15px;letter-spacing:3px;}
+.hero{height:60vh;background:url('https://images.unsplash.com/photo-1520975916090-3105956dac38')center/cover;display:flex;align-items:center;justify-content:center;}
+.hero h1{background:rgba(0,0,0,0.6);padding:10px;}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px;}
+.card{background:#151515;border-radius:12px;overflow:hidden;}
+.card img{width:100%;height:160px;object-fit:cover;}
+.card-content{padding:8px;}
+button{width:100%;padding:8px;border:none;background:white;color:black;border-radius:6px;}
+.cart-box{padding:10px;}
+.cart-item{display:flex;justify-content:space-between;}
+.cart-btn{position:fixed;bottom:20px;right:20px;background:white;color:black;padding:12px;border-radius:30px;}
+input,textarea{width:90%;margin:5px auto;display:block;padding:10px;border:none;border-radius:6px;}
+</style>
+</head>
+
+<body>
+
+<header>SERAK</header>
+
+<section class="hero">
+<h1>Street. Raw. SERAK</h1>
+</section>
+
+<section class="products" id="products"></section>
+
+<div class="cart-box">
+<h3>Cart</h3>
+<div id="cartItems"></div>
+
+<h3>Your Details</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<textarea id="address" placeholder="Address"></textarea>
+</div>
+
+<div class="cart-btn" onclick="orderNow()">🛒 (<span id="count">0</span>)</div>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function saveCart(){localStorage.setItem("cart",JSON.stringify(cart));}
+
+function renderProducts(){
+let c=document.getElementById("products");
+c.innerHTML="";
+products.forEach((p,i)=>{
+c.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<div class="card-content">
+<h4>${p.name}</h4>
+<p>₹${p.price}</p>
+<button onclick="addToCart(${i})">Add</button>
+</div>
+</div>`;
+});
+}
+
+function addToCart(i){
+cart.push(products[i]);
+saveCart();
+updateCart();
+}
+
+function updateCart(){
+document.getElementById("count").innerText=cart.length;
+let list=document.getElementById("cartItems");
+list.innerHTML="";
+cart.forEach((item,i)=>{
+list.innerHTML+=`
+<div class="cart-item">
+${item.name} - ₹${item.price}
+<button onclick="removeItem(${i})">❌</button>
+</div>`;
+});
+}
+
+function removeItem(i){
+cart.splice(i,1);
+saveCart();
+updateCart();
+}
+
+function orderNow(){
+let name=nameInput.value;
+let phone=phoneInput.value;
+let address=addressInput.value;
+
+if(!name||!phone||!address||cart.length===0){
+alert("Fill all details");
+return;
+}
+
+let msg="🛒 *SERAK ORDER*%0A%0A";
+let total=0;
+
+cart.forEach(item=>{
+msg+=item.name+" - ₹"+item.price+"%0A";
+total+=item.price;
+});
+
+msg+="%0A*Total:* ₹"+total+"%0A%0A";
+msg+="*Name:* "+name+"%0A";
+msg+="*Phone:* "+phone+"%0A";
+msg+="*Address:* "+address;
+
+let phoneNumber="917085967649";
+window.open(`https://wa.me/${phoneNumber}?text=${msg}`);
+
+cart=[];
+saveCart();
+updateCart();
+}
+
+let nameInput=document.getElementById("name");
+let phoneInput=document.getElementById("phone");
+let addressInput=document.getElementById("address");
+
+function saveUser(){
+localStorage.setItem("name",nameInput.value);
+localStorage.setItem("phone",phoneInput.value);
+localStorage.setItem("address",addressInput.value);
+}
+
+nameInput.oninput=saveUser;
+phoneInput.oninput=saveUser;
+addressInput.oninput=saveUser;
+
+function loadUser(){
+nameInput.value=localStorage.getItem("name")||"";
+phoneInput.value=localStorage.getItem("phone")||"";
+addressInput.value=localStorage.getItem("address")||"";
+}
+
+renderProducts();
+updateCart();
+loadUser();
+</script>
+
+</body>
+</html>
